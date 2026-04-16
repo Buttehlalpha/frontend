@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// Base connection to your backend
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
@@ -8,44 +7,22 @@ const api = axios.create({
   },
 });
 
-// ========================
-// AUTH APIs
-// ========================
-
-// Register user
+// AUTH
 export const registerUser = (data) => api.post("/api/auth/register", data);
-
-// Login user
 export const loginUser = (data) => api.post("/api/auth/login", data);
 
-// Get user profile
-export const getProfile = () => api.get("/api/auth/profile");
+// STUDY
+export const getStudy = (userId) => api.get(`/api/study/${userId}`);
+export const addStudy = (data) => api.post("/api/study/add", data);
 
+// ASSIGNMENT
+export const addAssignment = (data) => api.post("/api/assignment/add", data);
 
-// ========================
-// TASK / MODULE APIs
-// ========================
+// GROUPS
+export const createGroup = (data) => api.post("/api/groups/create", data);
+export const joinGroup = (data) => api.post("/api/groups/join", data);
 
-// Get all modules/tasks
-export const getModules = () => api.get("/api/modules");
-
-// Create module/task
-export const createModule = (data) => api.post("/api/modules", data);
-
-// Update module/task
-export const updateModule = (id, data) =>
-  api.put(`/api/modules/${id}`, data);
-
-// Delete module/task
-export const deleteModule = (id) =>
-  api.delete(`/api/modules/${id}`);
-
-
-// ========================
-// AI APIs (if you use OpenAI)
-// ========================
-
-export const getAISuggestion = (data) =>
-  api.post("/api/ai/suggest", data);
+// AI
+export const getAISuggestion = (data) => api.post("/api/ai/suggest", data);
 
 export default api;

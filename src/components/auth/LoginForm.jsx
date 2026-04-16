@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
 import GoogleButton from "./GoogleButton";
-import { loginUser } from "../../api/auth";
+import { loginUser } from "../../api";
 import { toast } from "react-toastify";
 
 const LoginForm = () => {

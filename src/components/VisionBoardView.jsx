@@ -8,10 +8,14 @@ const VisionBoardView = () => {
 
   useEffect(() => {
     const fetchBoard = async () => {
-      const res = await axios.get(
-        `http://localhost:5000/api/vision/${userId}`
-      );
-      setData(res.data);
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/vision/${userId}`
+        );
+        setData(res.data);
+      } catch (err) {
+        console.log("Vision error:", err);
+      }
     };
 
     fetchBoard();
@@ -26,7 +30,7 @@ const VisionBoardView = () => {
       {data.images.map((img, i) => (
         <img
           key={i}
-          src={`http://localhost:5000/${img}`}
+          src={`${import.meta.env.VITE_API_URL}/${img}`}
           className="rounded-xl object-cover w-full h-40"
         />
       ))}
