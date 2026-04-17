@@ -1,5 +1,8 @@
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+const API = "https://ai-backend-fxj9.onrender.com";
 
 const GroupChat = () => {
   const { state } = useLocation();
@@ -8,17 +11,49 @@ const GroupChat = () => {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
 
-  const handleSend = () => {
-    if (!text) return;
+  const token = localStorage.getItem("token");
 
-    const newMsg = {
-      text,
-      sender: "You",
-      time: new Date().toLocaleTimeString(),
+  // ✅ FETCH MESSAGES FROM BACKEND
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const res = await axios.get(`${API}/api/groups/${group?._id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setMessages(res.data.messages || []);
+      } catch (err) {
+        console.log("Fetch error:", err);
+      }
     };
 
-    setMessages([...messages, newMsg]);
-    setText("");
+    if (group?._id) fetchMessages();
+  }, [group]);
+
+  // ✅ SEND MESSAGE TO BACKEND
+  const handleSend = async () => {
+    if (!text) return;
+
+    try {
+      const res = await axios.post(
+        `${API}/api/groups/message`,
+        {
+          groupId: group._id,
+          text,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setMessages((prev) => [...prev, res.data]);
+      setText("");
+    } catch (err) {
+      console.log("Send error:", err);
+    }
   };
 
   return (
@@ -35,7 +70,8 @@ const GroupChat = () => {
           <div key={i} className="bg-white p-3 rounded-lg shadow-sm">
             <p className="text-sm">{msg.text}</p>
             <p className="text-xs text-gray-400 mt-1">
-              {msg.sender} • {msg.time}
+              {msg.sender?.name || "User"} •{" "}
+              {new Date(msg.createdAt).toLocaleTimeString()}
             </p>
           </div>
         ))}
